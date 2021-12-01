@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200&display=swap');
+
+.movieContainer h2 {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+.movieContainer img {
+  -webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(75%, transparent), to(rgba(250, 250, 250, 0.1)));
+}
