@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { IMovie } from '../models/IMovie'
 import {
   Box,
   Heading,
@@ -12,24 +11,47 @@ import {
 import { useColorMode } from '@chakra-ui/color-mode'
 import styles from './DetailsItem.module.css'
 import { AiFillStar } from 'react-icons/ai'
+import EpisodesGuide from './EpisodesGuide'
+import { Episode, Itv } from '../models/Interface'
 
-const DetailsItem = (data: IMovie) => {
-  const [selectedSeason, setSelectedSeason] = React.useState(1)
-  const { toggleColorMode, colorMode } = useColorMode()
+const DetailsItem: React.FC<Itv> = ({ data }) => {
+  const [numberOfSeasons, setNumberOfSeasons] = React.useState(1)
+  const [episodes, setEpisodes] = React.useState<Episode[]>([])
+  const { colorMode } = useColorMode()
   const isDarkMode = colorMode === 'dark'
-  console.log(data.data)
+  const episodeData = data?._embedded.episodes
+
+  // const getSelectedSeasonEpisodes = React.useCallback(() => {
+  //   let seasonEpisodes: Episode[] = []
+  //   episodeData.forEach((element: any) => {
+  //     if (element.season === selectedSeason) {
+  //       seasonEpisodes.push(element)
+  //     }
+  //   })
+
+  //   setEpisodes(seasonEpisodes)
+  // }, [selectedSeason])
+
+  const getTotalSeasons = React.useCallback(() => {
+    let distinctSeasons = [...new Set(episodeData.map((e: any) => e.season))]
+    setNumberOfSeasons(distinctSeasons.length)
+  }, [episodeData])
+
+  React.useEffect(() => {
+    getTotalSeasons()
+  }, [data, getTotalSeasons])
 
   const formattedPremierDate = () => {
-    return data?.data.premiered.split('-')[0]
+    return data?.premiered.split('-')[0]
   }
 
   const formattedEndDate = () => {
-    if (!data.data.ended) return ''
-    return data.data.ended.split('-')[0]
+    if (!data.ended) return ''
+    return data.ended.split('-')[0]
   }
 
   const formattedGenres = () => {
-    return data?.data.genres.map((g, i, { length }) => {
+    return data?.genres.map((g, i, { length }) => {
       return (
         <Text key={i} opacity='0.5'>
           {i + 1 === length ? g : ` ${g} |`}
@@ -40,7 +62,7 @@ const DetailsItem = (data: IMovie) => {
 
   const displayShowDates = () => {
     let dates
-    data.data.premiered
+    data.premiered
       ? (dates = `${formattedPremierDate()} - ${formattedEndDate()}`)
       : (dates = '')
     return dates
@@ -54,8 +76,8 @@ const DetailsItem = (data: IMovie) => {
             maxW='650px'
             h='75vh'
             rounded={10}
-            src={data.data.image?.original}
-            alt={`poster for show ${data.data.name}`}
+            src={data.image?.original}
+            alt={`poster for show ${data.name}`}
             fit='cover'
           />
         </Box>
@@ -74,12 +96,12 @@ const DetailsItem = (data: IMovie) => {
             >
               <VStack alignItems='start'>
                 <HStack alignItems='center'>
-                  <Heading fontSize={36}>{data?.data.name}</Heading>
+                  <Heading fontSize={36}>{data?.name}</Heading>
                   <Text>{displayShowDates()}</Text>
                 </HStack>
                 <HStack>{formattedGenres()}</HStack>
               </VStack>
-              {data?.data.rating.average && (
+              {data?.rating.average && (
                 <VStack alignItems='start'>
                   <Text>IMDb Rating</Text>
                   <VStack>
@@ -90,9 +112,9 @@ const DetailsItem = (data: IMovie) => {
                       <HStack>
                         <Text fontWeight='bold'>
                           <Link
-                            href={`https://www.imdb.com/title/${data.data.externals.imdb}`}
+                            href={`https://www.imdb.com/title/${data.externals.imdb}`}
                           >
-                            {data?.data.rating.average}
+                            {data?.rating.average}
                           </Link>
                         </Text>
                         <Text opacity='0.5'>/ 10</Text>
@@ -103,10 +125,15 @@ const DetailsItem = (data: IMovie) => {
               )}
             </HStack>
           </HStack>
-          <Box rounded='10' p={4} bg={isDarkMode ? 'gray.700' : 'gray.200'}>
-            {data.data.summary ? (
+          <Box
+            rounded='10'
+            p={4}
+            mb={5}
+            bg={isDarkMode ? 'gray.700' : 'gray.200'}
+          >
+            {data.summary ? (
               <Text mb={10}>
-                {data?.data.summary.replace(/<\/?[A-z][^>]*>/g, '')}
+                {data?.summary.replace(/<\/?[A-z][^>]*>/g, '')}
               </Text>
             ) : (
               <Text mb={10} opacity='0.5'>
@@ -114,7 +141,44 @@ const DetailsItem = (data: IMovie) => {
               </Text>
             )}
 
-            <Box className='networkInfoContainer'></Box>
+            <Box className='showInfoContainer'>
+              {data?.runtime && (
+                <HStack>
+                  <Text>Runtime </Text>
+                  <Text opacity='0.5'>{`${data?.runtime}m`}</Text>
+                </HStack>
+              )}
+              {data?.language && (
+                <HStack>
+                  <Text>Language </Text>
+                  <Text opacity='0.5'>{data?.language}</Text>
+                </HStack>
+              )}
+              {data?.network && (
+                <VStack alignItems='start' spacing='0'>
+                  <HStack>
+                    <Text>Country </Text>
+                    <Text opacity='0.5'>{data?.network.country.name}</Text>
+                  </HStack>
+                  <HStack>
+                    <Text>Network </Text>
+                    <Text opacity='0.5'>{data?.network.name}</Text>
+                  </HStack>
+                </VStack>
+              )}
+            </Box>
+          </Box>
+          <Box
+            className='episodesGuide'
+            rounded='10'
+            p={4}
+            bg={isDarkMode ? 'gray.700' : 'gray.200'}
+          >
+            <Text mb={5}>Episodes Guide</Text>
+            <EpisodesGuide
+              numberOfSeasons={numberOfSeasons}
+              episodesData={data._embedded.episodes}
+            />
           </Box>
         </Box>
       </HStack>

@@ -1,9 +1,9 @@
 import * as React from 'react'
 import axios from 'axios'
-import { IMovie } from '../models/IMovie'
+import { Itv } from './../models/Interface'
 
 const useMovies = (searchQuery: string) => {
-  const [data, setData] = React.useState<IMovie | null>(null)
+  const [data, setData] = React.useState<Itv | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState(null)
 
