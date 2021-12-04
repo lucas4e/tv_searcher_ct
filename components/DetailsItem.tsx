@@ -13,24 +13,15 @@ import styles from './DetailsItem.module.css'
 import { AiFillStar } from 'react-icons/ai'
 import EpisodesGuide from './EpisodesGuide'
 import { Episode, Itv } from '../models/Interface'
+import { useEpisodeContext } from '../lib/showContext'
+import EpisodeDetailsPage from './EpisodeDetailsPage'
 
 const DetailsItem: React.FC<Itv> = ({ data }) => {
+  const { episodeContext, setEpisodeContext } = useEpisodeContext()
   const [numberOfSeasons, setNumberOfSeasons] = React.useState(1)
-  const [episodes, setEpisodes] = React.useState<Episode[]>([])
   const { colorMode } = useColorMode()
   const isDarkMode = colorMode === 'dark'
   const episodeData = data?._embedded.episodes
-
-  // const getSelectedSeasonEpisodes = React.useCallback(() => {
-  //   let seasonEpisodes: Episode[] = []
-  //   episodeData.forEach((element: any) => {
-  //     if (element.season === selectedSeason) {
-  //       seasonEpisodes.push(element)
-  //     }
-  //   })
-
-  //   setEpisodes(seasonEpisodes)
-  // }, [selectedSeason])
 
   const getTotalSeasons = React.useCallback(() => {
     let distinctSeasons = [...new Set(episodeData.map((e: any) => e.season))]
@@ -81,106 +72,110 @@ const DetailsItem: React.FC<Itv> = ({ data }) => {
             fit='cover'
           />
         </Box>
-        <Box w='full'>
-          <HStack
-            rounded='10'
-            p={4}
-            mb={5}
-            bg={isDarkMode ? 'gray.700' : 'gray.200'}
-          >
+        {!episodeContext ? (
+          <Box w='full' overflowX='auto'>
             <HStack
-              display='flex'
-              justifyContent='space-between'
-              w='100%'
-              alignItems='center'
+              rounded='10'
+              p={4}
+              mb={5}
+              bg={isDarkMode ? 'gray.700' : 'gray.200'}
             >
-              <VStack alignItems='start'>
-                <HStack alignItems='center'>
-                  <Heading fontSize={36}>{data?.name}</Heading>
-                  <Text>{displayShowDates()}</Text>
-                </HStack>
-                <HStack>{formattedGenres()}</HStack>
-              </VStack>
-              {data?.rating.average && (
+              <HStack
+                display='flex'
+                justifyContent='space-between'
+                w='100%'
+                alignItems='center'
+              >
                 <VStack alignItems='start'>
-                  <Text>IMDb Rating</Text>
-                  <VStack>
-                    <HStack>
-                      <AiFillStar
-                        style={{ fill: '#c1ab29', fontSize: '22px' }}
-                      />
+                  <HStack alignItems='center'>
+                    <Heading fontSize={36}>{data?.name}</Heading>
+                    <Text>{displayShowDates()}</Text>
+                  </HStack>
+                  <HStack>{formattedGenres()}</HStack>
+                </VStack>
+                {data?.rating.average && (
+                  <VStack alignItems='start'>
+                    <Text>IMDb Rating</Text>
+                    <VStack>
                       <HStack>
-                        <Text fontWeight='bold'>
-                          <Link
-                            href={`https://www.imdb.com/title/${data.externals.imdb}`}
-                          >
-                            {data?.rating.average}
-                          </Link>
-                        </Text>
-                        <Text opacity='0.5'>/ 10</Text>
+                        <AiFillStar
+                          style={{ fill: '#c1ab29', fontSize: '22px' }}
+                        />
+                        <HStack>
+                          <Text fontWeight='bold'>
+                            <Link
+                              href={`https://www.imdb.com/title/${data.externals.imdb}`}
+                            >
+                              {data?.rating.average}
+                            </Link>
+                          </Text>
+                          <Text opacity='0.5'>/ 10</Text>
+                        </HStack>
                       </HStack>
+                    </VStack>
+                  </VStack>
+                )}
+              </HStack>
+            </HStack>
+            <Box
+              rounded='10'
+              p={4}
+              mb={5}
+              bg={isDarkMode ? 'gray.700' : 'gray.200'}
+            >
+              {data.summary ? (
+                <Text mb={10}>
+                  {data?.summary.replace(/<\/?[A-z][^>]*>/g, '')}
+                </Text>
+              ) : (
+                <Text mb={10} opacity='0.5'>
+                  No summary available for this show
+                </Text>
+              )}
+
+              <Box className='showInfoContainer'>
+                {data?.runtime && (
+                  <HStack>
+                    <Text>Runtime </Text>
+                    <Text opacity='0.5'>{`${data?.runtime}m`}</Text>
+                  </HStack>
+                )}
+                {data?.language && (
+                  <HStack>
+                    <Text>Language </Text>
+                    <Text opacity='0.5'>{data?.language}</Text>
+                  </HStack>
+                )}
+                {data?.network && (
+                  <VStack alignItems='start' spacing='0'>
+                    <HStack>
+                      <Text>Country </Text>
+                      <Text opacity='0.5'>{data?.network.country.name}</Text>
+                    </HStack>
+                    <HStack>
+                      <Text>Network </Text>
+                      <Text opacity='0.5'>{data?.network.name}</Text>
                     </HStack>
                   </VStack>
-                </VStack>
-              )}
-            </HStack>
-          </HStack>
-          <Box
-            rounded='10'
-            p={4}
-            mb={5}
-            bg={isDarkMode ? 'gray.700' : 'gray.200'}
-          >
-            {data.summary ? (
-              <Text mb={10}>
-                {data?.summary.replace(/<\/?[A-z][^>]*>/g, '')}
-              </Text>
-            ) : (
-              <Text mb={10} opacity='0.5'>
-                No summary available for this show
-              </Text>
-            )}
-
-            <Box className='showInfoContainer'>
-              {data?.runtime && (
-                <HStack>
-                  <Text>Runtime </Text>
-                  <Text opacity='0.5'>{`${data?.runtime}m`}</Text>
-                </HStack>
-              )}
-              {data?.language && (
-                <HStack>
-                  <Text>Language </Text>
-                  <Text opacity='0.5'>{data?.language}</Text>
-                </HStack>
-              )}
-              {data?.network && (
-                <VStack alignItems='start' spacing='0'>
-                  <HStack>
-                    <Text>Country </Text>
-                    <Text opacity='0.5'>{data?.network.country.name}</Text>
-                  </HStack>
-                  <HStack>
-                    <Text>Network </Text>
-                    <Text opacity='0.5'>{data?.network.name}</Text>
-                  </HStack>
-                </VStack>
-              )}
+                )}
+              </Box>
+            </Box>
+            <Box
+              className='episodesGuide'
+              rounded='10'
+              p={4}
+              bg={isDarkMode ? 'gray.700' : 'gray.200'}
+            >
+              <Text mb={5}>Episodes Guide</Text>
+              <EpisodesGuide
+                numberOfSeasons={numberOfSeasons}
+                episodesData={data._embedded.episodes}
+              />
             </Box>
           </Box>
-          <Box
-            className='episodesGuide'
-            rounded='10'
-            p={4}
-            bg={isDarkMode ? 'gray.700' : 'gray.200'}
-          >
-            <Text mb={5}>Episodes Guide</Text>
-            <EpisodesGuide
-              numberOfSeasons={numberOfSeasons}
-              episodesData={data._embedded.episodes}
-            />
-          </Box>
-        </Box>
+        ) : (
+          <EpisodeDetailsPage />
+        )}
       </HStack>
     </Box>
   )

@@ -1,17 +1,15 @@
 import * as React from 'react'
 import {
-  Text,
   Tabs,
   TabList,
   TabPanels,
   Tab,
   TabPanel,
   HStack,
-  ListItem,
-  List,
 } from '@chakra-ui/react'
 import EpisodeDetailsCard from './EpisodeDetailsCard'
 import { Episode } from '../models/Interface'
+import styles from './EpisodesGuide.module.css'
 
 interface EpisodesProps {
   numberOfSeasons: number
@@ -35,15 +33,18 @@ const EpisodesGuide: React.FC<EpisodesProps> = ({
       <TabPanels>
         {Array.from(Array(numberOfSeasons)).map((_, index) => (
           <TabPanel key={index}>
-            <List>
+            <HStack
+              className={styles.episodesScrollContainer}
+              overflowX='scroll'
+              display='flex'
+              alignItems='flex-start'
+            >
               {episodesData
                 ?.filter(episode => episode.season === selectedSeason)
                 .map(episode => (
-                  <ListItem key={episode.id}>
-                    <Text>{episode.name}</Text>
-                  </ListItem>
+                  <EpisodeDetailsCard key={episode.id} {...episode} />
                 ))}
-            </List>
+            </HStack>
           </TabPanel>
         ))}
       </TabPanels>
