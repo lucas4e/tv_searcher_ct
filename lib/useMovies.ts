@@ -22,7 +22,7 @@ const useMovies = (searchQuery: string) => {
     let res = null
     try {
       res = await axios.get(`${baseUrl} ${sq}&embed=episodes`)
-    } catch (error) {
+    } catch (error: any) {
       setError(error.response)
     }
     if (res) setData(res.data)
