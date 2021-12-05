@@ -12,14 +12,13 @@ import {
 import { MdOutlineArrowBackIosNew } from 'react-icons/md'
 import { useColorMode } from '@chakra-ui/color-mode'
 import styles from './DetailsItem.module.css'
-import { AiFillStar } from 'react-icons/ai'
 import EpisodesGuide from './EpisodesGuide'
-import { Episode, Itv } from '../models/Interface'
+import { Itv } from '../models/Interface'
 import { useEpisodeContext } from '../lib/showContext'
 import EpisodeDetailsPage from './EpisodeDetailsPage'
 import IMDbRating from './IMDbRating'
 
-const DetailsItem: React.FC<Itv> = ({ data }) => {
+const DetailsItem: React.FC<Itv> = data => {
   const { episodeContext, setEpisodeContext } = useEpisodeContext()
   const [numberOfSeasons, setNumberOfSeasons] = React.useState(1)
   const { colorMode } = useColorMode()
@@ -36,16 +35,16 @@ const DetailsItem: React.FC<Itv> = ({ data }) => {
   }, [data, getTotalSeasons])
 
   const formattedPremierDate = () => {
-    return data?.premiered.split('-')[0]
+    return data?.premiered.toString().split('-')[0]
   }
 
   const formattedEndDate = () => {
     if (!data.ended) return ''
-    return data.ended.split('-')[0]
+    return data.ended.toString().split('-')[0]
   }
 
   const formattedGenres = () => {
-    return data?.genres.map((g, i, { length }) => {
+    return data?.genres.map((g: any, i: any, { length }) => {
       return (
         <Text key={i} opacity='0.5'>
           {i + 1 === length ? g : ` ${g} |`}
@@ -65,6 +64,7 @@ const DetailsItem: React.FC<Itv> = ({ data }) => {
   const exitEpisodeView = () => {
     return setEpisodeContext(null)
   }
+  console.log(data)
 
   return (
     <Box className={styles.movieContainer}>

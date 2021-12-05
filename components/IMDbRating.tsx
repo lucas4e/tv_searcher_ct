@@ -23,7 +23,7 @@ const IMDbRating: React.FC<Props> = props => {
               <Text>{props.rating}</Text>
             )}
           </Text>
-          <Text opacity='0.5'>/ 10</Text>
+          <Text opacity={0.4}>/ 10</Text>
         </HStack>
       </HStack>
     </VStack>

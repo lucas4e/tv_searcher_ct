@@ -29,7 +29,7 @@ const Home: NextPage = () => {
           <Icon w={5} h={5} as={BiSearchAlt} />
         </InputRightElement>
       </InputGroup>
-      {data ? <DetailsItem data={data} /> : <MediaPlaceholderItem />}
+      {data ? <DetailsItem {...data} /> : <MediaPlaceholderItem />}
     </Box>
   )
 }
