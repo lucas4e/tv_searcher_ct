@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { Episode } from '../models/Interface'
 
-const Context = React.createContext(null)
+const Context = React.createContext<Episode | null>(null)
+
 export const ContextProvider = ({ children }) => {
   const [episodeContext, setEpisodeContext] = React.useState<Episode | null>(
     null

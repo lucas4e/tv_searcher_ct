@@ -7,7 +7,9 @@ import {
   VStack,
   Text,
   Link,
+  IconButton,
 } from '@chakra-ui/react'
+import { MdOutlineArrowBackIosNew } from 'react-icons/md'
 import { useColorMode } from '@chakra-ui/color-mode'
 import styles from './DetailsItem.module.css'
 import { AiFillStar } from 'react-icons/ai'
@@ -15,6 +17,7 @@ import EpisodesGuide from './EpisodesGuide'
 import { Episode, Itv } from '../models/Interface'
 import { useEpisodeContext } from '../lib/showContext'
 import EpisodeDetailsPage from './EpisodeDetailsPage'
+import IMDbRating from './IMDbRating'
 
 const DetailsItem: React.FC<Itv> = ({ data }) => {
   const { episodeContext, setEpisodeContext } = useEpisodeContext()
@@ -59,6 +62,10 @@ const DetailsItem: React.FC<Itv> = ({ data }) => {
     return dates
   }
 
+  const exitEpisodeView = () => {
+    return setEpisodeContext(null)
+  }
+
   return (
     <Box className={styles.movieContainer}>
       <HStack alignItems='flex-start'>
@@ -89,31 +96,15 @@ const DetailsItem: React.FC<Itv> = ({ data }) => {
                 <VStack alignItems='start'>
                   <HStack alignItems='center'>
                     <Heading fontSize={36}>{data?.name}</Heading>
-                    <Text>{displayShowDates()}</Text>
+                    <Text opacity={0.4}>{displayShowDates()}</Text>
                   </HStack>
                   <HStack>{formattedGenres()}</HStack>
                 </VStack>
                 {data?.rating.average && (
-                  <VStack alignItems='start'>
-                    <Text>IMDb Rating</Text>
-                    <VStack>
-                      <HStack>
-                        <AiFillStar
-                          style={{ fill: '#c1ab29', fontSize: '22px' }}
-                        />
-                        <HStack>
-                          <Text fontWeight='bold'>
-                            <Link
-                              href={`https://www.imdb.com/title/${data.externals.imdb}`}
-                            >
-                              {data?.rating.average}
-                            </Link>
-                          </Text>
-                          <Text opacity='0.5'>/ 10</Text>
-                        </HStack>
-                      </HStack>
-                    </VStack>
-                  </VStack>
+                  <IMDbRating
+                    rating={data.rating.average}
+                    url={data.externals.imdb}
+                  />
                 )}
               </HStack>
             </HStack>
@@ -132,33 +123,24 @@ const DetailsItem: React.FC<Itv> = ({ data }) => {
                   No summary available for this show
                 </Text>
               )}
-
-              <Box className='showInfoContainer'>
-                {data?.runtime && (
-                  <HStack>
-                    <Text>Runtime </Text>
-                    <Text opacity='0.5'>{`${data?.runtime}m`}</Text>
-                  </HStack>
-                )}
-                {data?.language && (
-                  <HStack>
-                    <Text>Language </Text>
-                    <Text opacity='0.5'>{data?.language}</Text>
-                  </HStack>
-                )}
-                {data?.network && (
-                  <VStack alignItems='start' spacing='0'>
-                    <HStack>
-                      <Text>Country </Text>
-                      <Text opacity='0.5'>{data?.network.country.name}</Text>
-                    </HStack>
-                    <HStack>
-                      <Text>Network </Text>
-                      <Text opacity='0.5'>{data?.network.name}</Text>
-                    </HStack>
-                  </VStack>
-                )}
-              </Box>
+              <HStack>
+                <VStack mr='5' alignItems='flex-start'>
+                  <Text>Runtime</Text>
+                  <Text>Language</Text>
+                  <Text>Country</Text>
+                  <Text>Network</Text>
+                </VStack>
+                <VStack alignItems='flex-start'>
+                  <Text opacity='0.5'>{`${data?.runtime || 'unknown'}m`}</Text>
+                  <Text opacity='0.5'>{`${data?.language || 'unknown'}`}</Text>
+                  <Text opacity='0.5'>{`${
+                    data?.network.country.name || 'unknown'
+                  }`}</Text>
+                  <Text opacity='0.5'>{`${
+                    data?.network.name || 'unknown'
+                  }`}</Text>
+                </VStack>
+              </HStack>
             </Box>
             <Box
               className='episodesGuide'
@@ -174,7 +156,17 @@ const DetailsItem: React.FC<Itv> = ({ data }) => {
             </Box>
           </Box>
         ) : (
-          <EpisodeDetailsPage />
+          <VStack alignItems='flex-start'>
+            <EpisodeDetailsPage />
+            <IconButton
+              w='full'
+              aria-label='go back'
+              icon={<MdOutlineArrowBackIosNew />}
+              onClick={exitEpisodeView}
+            >
+              Back
+            </IconButton>
+          </VStack>
         )}
       </HStack>
     </Box>

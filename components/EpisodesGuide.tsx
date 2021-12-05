@@ -25,7 +25,7 @@ const EpisodesGuide: React.FC<EpisodesProps> = ({
 
   return (
     <Tabs index={tabIndex} onChange={e => setTabIndex(e)}>
-      <TabList>
+      <TabList flexFlow='wrap'>
         {Array.from(Array(numberOfSeasons)).map((_, index) => {
           return <Tab key={index}>{`Season ${index + 1}`}</Tab>
         })}

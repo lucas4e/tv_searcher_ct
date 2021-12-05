@@ -1,8 +1,10 @@
 import * as React from 'react'
 import axios from 'axios'
 import { Itv } from './../models/Interface'
+import { useEpisodeContext } from '../lib/showContext'
 
 const useMovies = (searchQuery: string) => {
+  const { episodeContext, setEpisodeContext } = useEpisodeContext()
   const [data, setData] = React.useState<Itv | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState(null)
@@ -10,6 +12,7 @@ const useMovies = (searchQuery: string) => {
   const baseUrl = 'https://api.tvmaze.com/singlesearch/shows?q='
 
   React.useEffect(() => {
+    if (episodeContext) setEpisodeContext(null)
     if (!searchQuery) return setData(null)
     const formattedString = searchQuery.split(' ').join('&')
     getMoviesBySearchQuery(formattedString)
