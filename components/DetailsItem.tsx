@@ -103,7 +103,7 @@ const DetailsItem: React.FC<Itv> = data => {
                 {data?.rating.average && (
                   <IMDbRating
                     rating={data.rating.average}
-                    url={data.externals.imdb}
+                    url={data.externals?.imdb || ''}
                   />
                 )}
               </HStack>
@@ -134,10 +134,10 @@ const DetailsItem: React.FC<Itv> = data => {
                   <Text opacity='0.5'>{`${data?.runtime || 'unknown'}m`}</Text>
                   <Text opacity='0.5'>{`${data?.language || 'unknown'}`}</Text>
                   <Text opacity='0.5'>{`${
-                    data?.network.country.name || 'unknown'
+                    data.network?.country.name || 'unknown'
                   }`}</Text>
                   <Text opacity='0.5'>{`${
-                    data?.network.name || 'unknown'
+                    data.network?.name || 'unknown'
                   }`}</Text>
                 </VStack>
               </HStack>

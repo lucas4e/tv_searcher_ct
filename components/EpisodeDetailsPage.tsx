@@ -53,7 +53,7 @@ const EpisodeDetailsPage: React.FC = () => {
         bg={isDarkMode ? 'gray.700' : 'gray.200'}
       >
         <HStack>
-          {episodeContext.image.original && (
+          {episodeContext.image && (
             <Image
               style={{ WebkitBoxReflect: 'initial' }}
               rounded={5}
