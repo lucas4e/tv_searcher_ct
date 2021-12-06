@@ -64,7 +64,11 @@ const EpisodeDetailsPage: React.FC = () => {
             />
           )}
         </HStack>
-        <Text>{episodeContext.summary.replace(/<\/?[A-z][^>]*>/g, '')}</Text>
+        {episodeContext.summary ? (
+          <Text>{episodeContext.summary.replace(/<\/?[A-z][^>]*>/g, '')}</Text>
+        ) : (
+          <Text w='800px'>No summary available for this episode...</Text>
+        )}
       </VStack>
     </Box>
   )
