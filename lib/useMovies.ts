@@ -14,14 +14,14 @@ const useMovies = (searchQuery: string) => {
   React.useEffect(() => {
     if (episodeContext) setEpisodeContext(null)
     if (!searchQuery) return setData(null)
-    const formattedString = searchQuery.split(' ').join('&')
+    const formattedString = searchQuery.trim()
     getMoviesBySearchQuery(formattedString)
   }, [searchQuery])
 
   const getMoviesBySearchQuery = async (sq: string) => {
     let res = null
     try {
-      res = await axios.get(`${baseUrl} ${sq}&embed=episodes`)
+      res = await axios.get(`${baseUrl}${sq}&embed=episodes`)
     } catch (error: any) {
       setError(error.response)
     }
